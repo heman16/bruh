@@ -1,0 +1,73 @@
+/* Center align the form */
+.category-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2em;
+  }
+
+  .title{
+    margin-top: 1em;
+    font-size: 2em;
+  }
+
+  .category-text{
+    font-size: 1.5em;
+    margin-top: 1em;
+    display: flex;
+  }
+
+  .player-name{
+    font-size: 3em;
+    margin-top: 1em;
+  }
+
+  .category-dropdown{
+    width: 200px;
+    margin-top: 1em;
+  }
+
+  .submit-btn{
+    margin-top: 0em;
+  }
+  
+  /* Style the dropdown */
+  select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background: white;
+    cursor: pointer;
+  }
+  
+  /* Style the button */
+  button {
+    background-color: #009688; /* Teal color */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  /* Button hover effect */
+  button:hover {
+    background-color: #00796b;
+  }
+  
+  /* Button active effect */
+  button:active {
+    transform: scale(0.95);
+  }
+  
+  /* Add responsive design */
+  @media (max-width: 600px) {
+    .category-container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }

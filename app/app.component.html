@@ -1,0 +1,248 @@
+<div *ngIf="isLoading" class="loader-overlay">
+  <div class="loader"></div>
+</div>
+<div *ngIf="!isLoading" class="wrapper">
+
+
+  <div class="container">
+
+    <div class="header">
+      <header>
+       Test Bash League 2025
+      </header>
+      <div class="search-container">
+        <input type="text" [(ngModel)]="searchPlayer" (input)="filterSuggestions()" placeholder="Search...">
+        <div style="max-height: 8em;
+          overflow: auto;" *ngIf="showSuggestions" class="suggestions">
+          <ul>
+            <li *ngFor="let suggestion of filteredSuggestions" (click)="selectSuggestion(suggestion)">{{
+              suggestion?.player_name }}</li>
+          </ul>
+        </div>
+      </div>
+      <button *ngIf="!isViewTeamsClicked" (click)="viewTeams(true)">View Teams</button>
+      <button *ngIf="isViewTeamsClicked" (click)="backToAuctionPage()">Back To Auction</button>
+
+
+    </div>
+    <div *ngIf="!isViewTeamsClicked" style="height: 100%;">
+
+      <div class="body" *ngFor="let data of selectedPlayerData; let i=index;">
+        <div style="    font-weight: bold;
+          position: absolute;
+          bottom: 46em;
+          font-size: large;">
+        </div>
+        <div class="left">
+          <div class="player-card">
+            <img *ngIf="checkIfSold(data.teamId)" src="assets/images/sold.png" alt="Sold" class="sold-image">
+          </div>
+          <div class="checkbox-container">
+            <label class="sports-name">
+              <input  type="checkbox" [checked]="data.day1" /> Day1 
+            </label>
+            <label class="sports-name">
+              <input  class="sports-name" type="checkbox" [checked]="data.day2" /> Day2 
+            </label>
+            <label class="sports-name">
+              <input class="sports-name" type="checkbox" [checked]="data.day3" /> Day3 
+            </label>
+            <label class="sports-name">
+              <input class="sports-name" type="checkbox" [checked]="data.day4" /> Day4 
+            </label>
+            
+          </div>
+          <!-- <div class="checkbox-container-played">
+            <label>
+              <input type="checkbox" [checked]="data.day4" /> Played ZBCL before
+            </label>
+          </div> -->
+          <!-- <app-user-image [employeeId]="data.employeeId" [skill]="data.primarySkill"></app-user-image> -->
+          <div class="user-image">
+            <!-- [ngStyle]="{'background-image': 'url(' + getImageName(data.employeeId,data.primarySkill) + ')'}"> -->
+
+            <app-user-image [employeeId]="data.employeeId" [skill]="data.primarySkill"></app-user-image>
+
+          </div>
+
+          <div class="name-container">
+            <div class="name">{{data.player_name}}
+              <div *ngIf="data.teamId !== null" class="team-name">({{getTeamName(data.teamId)}})</div>
+            </div>
+            <div class="hr"></div>
+          </div>
+          <div class="user-details">
+            <div>
+              <div class="dark_div">Primary Skill</div>
+              <b>{{data.primarySkill}}</b>
+            </div>
+            <div>
+              <div class="dark_div">Category</div>
+              <b>{{data.rating}}</b>
+            </div>
+            <div>
+              <div class="dark_div">Base Price</div>
+              <b>{{data.basePrice}} Cr</b>
+            </div>
+          </div>
+          <div class="more-info"> More Info </div>
+          <label class="details">{{data.description}}</label>
+        </div>
+
+        <div class="middle">
+
+
+
+          <div class="bid-container">
+
+            <div class="user-team-details">
+              <!-- <div class="arrow animated"></div> -->
+              <button class="bid-button" (click)="downBid()">Down</button>
+            </div>
+
+            <div class="bid-details">
+              <div>Current Bid</div>
+              <b class="bid-value">{{data.soldPrice}} Cr</b>
+            </div>
+
+            <div class="user-team-details">
+              <!-- <div class="arrow animated"></div> -->
+              <button class="bid-button" (click)="upBid()">Up</button>
+            </div>
+          </div>
+
+
+          <div class="dropdown">
+            <label for="dropdown" class="team-text">Team:</label>
+            <select [(ngModel)]="selectedTeamName" (change)="onValueChange(selectedTeamName)">
+              <option *ngFor="let item of teamData" [value]="item.teamId">
+                {{ item.team_name }}
+              </option>
+            </select>
+          </div>
+
+
+
+          <div class="footer-actions">
+            <div *ngIf="isTeamAssigned(data.teamId)">
+              <button (click)="sold()">Sold</button>
+            </div>
+            <div *ngIf="!isTeamAssigned(data.teamId)">
+              <button (click)="release(data.player_id)">
+                Release
+              </button>
+            </div>
+
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Player Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let entry of playerEntries">
+                  <td>{{ entry.category }}</td>
+                  <td>{{ entry.count }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="right abc">
+          <h2>Team Details</h2>
+          <div class="bd-example">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Team Name</th>
+                  <th scope="col">Balance Points</th>
+                  <th scope="col">Team Size</th>
+                  <th scope="col">Remaning</th>
+                  <th scope="col">Max Bid</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let team of teamData">
+                  <td (click)="openTeamModal(team.teamId)">{{team.team_name}}</td>
+                  <td>{{team.balance}} Cr</td>
+                  <td>{{getTeamPlayersCount(team.teamId)}}</td>
+                  <td>{{minimun_player-getTeamPlayersCount(team.teamId)}}</td>
+                  <td>{{(team.balance-((minimun_player-team.player.length)*lowest_player_bid))+lowest_player_bid}}</td>
+                </tr>
+              </tbody>
+
+            </table>
+            <div>
+              <app-random-player [data]="playerData"></app-random-player>
+
+            </div>
+          </div>
+
+        </div>
+
+
+        <img class="bg-img" src="../assets/images/cricket.jpg" />
+
+
+      </div>
+
+      <div class="footer-actions-absolute">
+        <button (click)="previous()"><i class="btnArrow btnLeft"></i></button>
+        <button (click)="next()"><i class="btnArrow btnRight"></i></button>
+      </div>
+    </div>
+
+    <div *ngIf="isViewTeamsClicked" style="height:100%; width:90%; margin:1em;">
+      <div style="overflow-y: auto;  display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(28em,1fr)); cursor: pointer;
+        grid-gap: 6em;max-height: 52em; padding-top: 1em;">
+        <div class="flip-card" *ngFor="let t of teamData" (click)="getAllPlayersInfo(t.teamId)"
+          (mouseover)="getAllPlayersInfo(t.teamId)">
+          <div class="flip-card-inner">
+            <div [id]="t.teamId" class="flip-card-front">
+              <!-- <img [src]="'../assets/images/'+t.team_name+'.png'" alt="Avatar" style="width:30em;height:25em;"> -->
+              <div class="container-card">
+                <h4><b>{{t.team_name}}</b></h4>
+                <p>Captain: {{t.team_captain}}</p>
+              </div>
+            </div>
+            <div *ngIf="t.player.length > 0" class="flip-card-back">
+              <div class="abcde">
+                <table class="tableWrap-2">
+                  <thead>
+                    <tr>
+                      <th>Player Name</th>
+                      <th>Skills</th>
+                      <th>Position</th>
+                      <th>Sold Price</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let p of t.player">
+                      <td>{{p.player_name}}</td>
+                      <td>{{p.rating}}</td>
+                      <td>{{p.position}}</td>
+                      <td>{{p.soldPrice}} Cr</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div >
+        <img src="../assets/images/bg2.jpg" alt="Avatar" style="width:100%">
+
+      </div> -->
+
+    </div>
+
+  </div>
+  <!-- <img class="bg-img2" src="../assets/images/bg2.jpg" /> -->
+</div>

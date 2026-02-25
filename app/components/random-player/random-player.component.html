@@ -1,0 +1,13 @@
+<div class="category-container">
+    <div class="title">Random Player Selection</div>
+    <label for="category" class ="category-text">Select Category:</label>
+    <select id="category" [(ngModel)]="selectedCategory" class="category-dropdown">
+      <option *ngFor="let category of categoryKeys" [value]="category">
+        {{ category }}
+      </option>
+    </select>
+  
+    <button (click)="onButtonClick()" class="submit-btn">Random</button>
+
+    <div class="player-name"> {{randomPlayer}}</div>
+  </div>
